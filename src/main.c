@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
-#include "Log.h"
+#include "log.h"
 #include "ftp.h"
 
 static int m_socket_cmd;
@@ -147,5 +147,27 @@ int ftp_download(char *name, void *buf, int len) {
         return 0;
     }
 
-    
+   //Ready to download
+   sprintf(m_send_buffer, "RETR %s\r\n", name);
+   ret = ftp_send_command(m_send_buffer);
+   if(ret != 1) {
+       return 0;
+   }
+   ret = ftp_recv_respond(m_recv_buffer, 1024);
+   if(ret != 150) {
+       socket_close(m_socket_data);
+       return 0;
+   }
+
+   //Start downloading and the server will automatically close
+   for(i=0; i<len; i+=ret) {
+        ret = socket_recv(m_socket_data, ((char *)buf) + i,
+         LOG_INFO("download %d/%d.\r\n", i + ret, len);
+         if(ret < 0) {
+            
+            LOG_INFO("download %d/%d.\r\n", i + ret, len);
+            break;
+
+         }
+   }
 }
