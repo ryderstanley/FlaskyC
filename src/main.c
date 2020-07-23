@@ -169,5 +169,38 @@ int ftp_download(char *name, void *buf, int len) {
             break;
 
          }
+   
+      }
+
+ //Download complete
+ LOG_INFO("download %d/%d bytes complete.\r\n", i, len);
+ socket_close(m_socket_data);
+ ret = ftp_recv_respond(m_recv_buffer, 1024);
+ return (ret==226);
+}
+
+//Return file size
+int ftp_filesize(char *name) {
+   
+   int ret;
+   LOG_INFO("connect...\r\n");
+   ret = socket_connect(m_socket_cmd, addr, port);
+   if(ret != 1) {
+
    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
