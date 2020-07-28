@@ -183,12 +183,35 @@ int ftp_download(char *name, void *buf, int len) {
 int ftp_filesize(char *name) {
    
    int ret;
-   LOG_INFO("connect...\r\n");
-   ret = socket_connect(m_socket_cmd, addr, port);
+   int size;
+   sprintf(m_send_buffer,"SIZE %s\r\n", name);
+   ret = ftp_send_command(m_send_buffer);
    if(ret != 1) {
-
-   }
+       return 0;
+    }
+   ret = ftp_recv_respond(m_recv_buffer, 1024);
+   if(ret != 213) {
+       return 0;
+    }
+   size = atoi(m_recv_buffer + 4);
+   return size;
 }
+
+//Logon Server
+int ftp_login(char *addr, int port, char *username, char *password) {
+    int ret;
+    LOG_INFO("connect...\r\n");
+    ret = socket_connect(m_socket_cmd, addr, port);
+    if(ret != 1) {
+        LOG_INFO("bad server, ret=%d!\r\n", ret);
+        socket_close(m_socket_cmd);
+        return 0;
+}
+
+
+
+
+        
 
 
 
