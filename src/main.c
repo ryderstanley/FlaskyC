@@ -207,6 +207,53 @@ int ftp_login(char *addr, int port, char *username, char *password) {
         socket_close(m_socket_cmd);
         return 0;
 }
+    LOG_INFO("login...\r\n");
+
+//Send USER
+    sprintf(m_send_buffer, "USER %s\r\n", username);
+    ret = ftp_send_command(m_send_buffer);
+    if(ret != 1) {
+      socket_close(m_socket_cmd);
+      return 0;
+    }
+
+//Send PASS
+    sprintf(m_send_buffer, "PASS %s\r\n", password);
+    ret = ftp_send_command(m_send_buffer);
+    if(ret != 1) {
+      socket_close(m_socket_cmd);
+      return 0;
+    }
+    ret = ftp_recv_respond(m_recv_buffer, 1024);
+    if(ret != 230) {
+      socket_close(m_socket_cmd);
+      return 0;
+    }
+    LOG_INFO("login success.\r\n");
+
+//Set to binary mode
+    ret = ftp_send_command("TYPE I\r\n");
+    if(ret != 1) {
+      socket_close(m_socket_cmd);
+      return 0;
+    }
+    ret = ftp_recv_respond(m_recv_buffer, 1024);
+    if(ret != 200) {
+      socket_close(m_socket_cmd);
+      return 0;
+    }
+    return 1;
+}
+
+ void ftp_quit(void) {
+   ftp_send_command("QUIT\r\n");
+   socket_close(m_socket_cmd);
+ }
+
+ void ftp_init(void) {
+   m_socket_cmd = socket_create();
+   m_socket_data= socket_create();
+ }
 
 
 
