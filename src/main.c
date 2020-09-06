@@ -17,12 +17,12 @@ static int ftp_send_command(char *cmd) {
     LOG_INFO("send command: %s\r\n", cmd);
     ret = socket_send(m_socket_cmd, cmd, (int)strlen(cmd));
     if(ret < 0) {
-        
+
         LOG_INFO("failed to send command:  s",cmd);
         return 0;
 
     }
-    
+
 return 1;
 
 }
@@ -34,7 +34,7 @@ static int ftp_recv_respond(char *resp, int len) {
     int off;
     len -= 1;
     for(off=0; off<len; off+=ret) {
-        
+
         ret = socket_recv(m_socket_cmd, &resp[off], 1);
         if(ret < 0) {
 
@@ -44,7 +44,7 @@ static int ftp_recv_respond(char *resp, int len) {
         }
 
         if(resp[off] == '\n') {
-            
+
             break;
 
         }
@@ -81,7 +81,7 @@ static int ftp_enter_pasv(char *ipaddr, int *port) {
 
 //Upload Files
 int ftp_upload(char *name, void *buf, int len) {
-    
+
     int ret;
     char ipaddr[32];
     int port;
@@ -113,7 +113,7 @@ int ftp_upload(char *name, void *buf, int len) {
     //Start uploading
     ret = socket_send(m_socket_data, buf, len);
     if(ret != len) {
-        
+
         LOG_INFO("send data error!\r\n");
         socket_close(m_socket_data);
         return 0;
@@ -142,7 +142,7 @@ int ftp_download(char *name, void *buf, int len) {
     //Connect data ports
     ret = socket_connect(m_socket_data, ipaddr, port);
     if(ret != 1) {
-        
+
         LOG_INFO("failed to connect data port\r\n");
         return 0;
     }
@@ -164,12 +164,12 @@ int ftp_download(char *name, void *buf, int len) {
         ret = socket_recv(m_socket_data, ((char *)buf) + i,
          LOG_INFO("download %d/%d.\r\n", i + ret, len);
          if(ret < 0) {
-            
+
             LOG_INFO("download %d/%d.\r\n", i + ret, len);
             break;
 
          }
-   
+
       }
 
  //Download complete
@@ -181,7 +181,7 @@ int ftp_download(char *name, void *buf, int len) {
 
 //Return file size
 int ftp_filesize(char *name) {
-   
+
    int ret;
    int size;
    sprintf(m_send_buffer,"SIZE %s\r\n", name);
@@ -254,23 +254,3 @@ int ftp_login(char *addr, int port, char *username, char *password) {
    m_socket_cmd = socket_create();
    m_socket_data= socket_create();
  }
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
